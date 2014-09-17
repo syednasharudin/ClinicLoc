@@ -1,40 +1,123 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_card">
+    android:weightSum="9"
+    android:background="@drawable/bg_card"
+    android:baselineAligned="false">
 
     <!-- Product id (pid) - will be HIDDEN - used to pass to other activity -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/tv_hidden_index"
-        android:visibility="gone" />
 
-    <TextView
-        android:id="@+id/tv_tenant_id"
-        android:layout_width="fill_parent"
-        android:paddingTop="6dip"
-        android:paddingLeft="6dip"
-        android:layout_height="wrap_content" />
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="0dp"
+        android:layout_height="fill_parent"
+        android:layout_weight="7">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tv_hidden_index"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/tv_tenant_id"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginBottom="5dp"
+            android:textSize="18sp"
+            android:textColor="@color/fontColor_blue"
+            android:textStyle="bold|normal"/>
+
+        <TextView
+            android:id="@+id/tv_tenant_name"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginBottom="0dp"
+            android:textSize="14sp"
+            android:textColor="@color/fontColor_grey"
+            android:textStyle="normal" />
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/icon_phone_16"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="3dp"
+                android:layout_marginBottom="5dp"
+                android:contentDescription="@string/contactIcon" />
+
+            <TextView
+                android:id="@+id/tv_company_name"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="2dp"
+                android:layout_marginTop="3dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginBottom="5dp"
+                android:textSize="14sp"
+                android:textColor="@color/fontColor_blue"
+                android:textStyle="bold|normal" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="fill_parent"
+        android:layout_weight="2">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/imageWaitingBox"
+            android:src="@drawable/cl_waiting_box"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tv_count_patient"
+            android:layout_alignLeft="@+id/imageWaitingBox"
+            android:layout_alignTop="@+id/imageWaitingBox"
+            android:layout_alignRight="@+id/imageWaitingBox"
+            android:layout_alignBottom="@+id/imageWaitingBox"
+            android:paddingBottom="10dp"
+            android:paddingRight="3dp"
+            android:layout_margin="1dp"
+            android:gravity="center"
+            android:text="10"
+            android:textColor="@color/fontColor_blue"
+            android:textStyle="bold|normal"
+            android:textSize="28sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tv_queue_num"
+            android:layout_alignBottom="@+id/imageWaitingBox"
+            android:layout_margin="1dp"
+            android:gravity="center"
+            android:text="Queue #"
+            android:textColor="@color/fontColor_blue"
+            android:textStyle="bold|normal"
+            android:textSize="12sp" />
+
+    </RelativeLayout>
 
     <!-- Name Label -->
-    <TextView
-        android:id="@+id/tv_tenant_name"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="6dip"
-        android:paddingLeft="6dip"
-        android:textSize="19dip" />
 
-    <TextView
-        android:id="@+id/tv_company_name"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="6dip"
-        android:paddingTop="6dip"
-        android:paddingLeft="6dip" />
 
 </LinearLayout>

@@ -25,6 +25,32 @@
         <item name="android:background">#F2F2F2</item>
     </style>
 
+    <style name="ListClinicName">
+        <item name="android:textSize">18sp</item>
+        <item name="android:layout_margin">5dp</item>
+        <item name="android:layout_marginLeft">15dp</item>
+        <item name="android:textColor">@color/fontColor_blue</item>
+        <item name="android:textStyle">bold|normal</item>
+    </style>
+
+    <style name="ListClinicAddress">
+        <item name="android:textSize">18sp</item>
+        <item name="android:layout_margin">5dp</item>
+        <item name="android:layout_marginBottom">0dp</item>
+        <item name="android:layout_marginLeft">15dp</item>
+        <item name="android:textColor">@color/fontColor_grey</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="ListClinicContactNo">
+        <item name="android:textSize">14sp</item>
+        <item name="android:layout_margin">5dp</item>
+        <item name="android:layout_marginTop">3dp</item>
+        <item name="android:layout_marginLeft">15dp</item>
+        <item name="android:textColor">@color/fontColor_blue</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
     <style name="ButtonBarButton" />
 
 </resources>

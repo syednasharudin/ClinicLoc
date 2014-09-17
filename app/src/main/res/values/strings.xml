@@ -13,5 +13,6 @@
     <string name="clinicContactNo">+60132965282</string>
     <string name="queueCount">QUEUE #</string>
     <string name="openMap">Show Maps</string>
+    <string name="contactIcon">contact_icon</string>
 
 </resources>

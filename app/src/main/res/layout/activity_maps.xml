@@ -11,7 +11,7 @@
         <FrameLayout
             android:layout_width="fill_parent"
             android:layout_height="0dp"
-            android:layout_weight="9"
+            android:layout_weight="7"
             android:id="@+id/map_layout" >
 
             <fragment
@@ -26,7 +26,7 @@
         <FrameLayout
             android:layout_width="fill_parent"
             android:layout_height="0dp"
-            android:layout_weight="0"
+            android:layout_weight="2"
             android:id="@+id/map_data"
             style="@style/MapBottom" >
 
@@ -82,13 +82,48 @@
 
                 </LinearLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/queueCount"
-                    android:id="@+id/textView"
-                    android:layout_weight="2"
-                    android:layout_marginTop="5dp" />
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="2">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/imageWaitingBox"
+                        android:src="@drawable/cl_waiting_box"
+                        android:paddingTop="5dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/tv_count_patient"
+                        android:layout_alignLeft="@+id/imageWaitingBox"
+                        android:layout_alignTop="@+id/imageWaitingBox"
+                        android:layout_alignRight="@+id/imageWaitingBox"
+                        android:layout_alignBottom="@+id/imageWaitingBox"
+                        android:paddingBottom="10dp"
+                        android:paddingRight="3dp"
+                        android:layout_margin="1dp"
+                        android:gravity="center"
+                        android:text="10"
+                        android:textColor="@color/fontColor_blue"
+                        android:textStyle="bold|normal"
+                        android:textSize="28sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/tv_queue_num"
+                        android:layout_alignBottom="@+id/imageWaitingBox"
+                        android:layout_margin="1dp"
+                        android:gravity="center"
+                        android:text="Queue #"
+                        android:textColor="@color/fontColor_blue"
+                        android:textStyle="bold|normal"
+                        android:textSize="12sp" />
+
+                </RelativeLayout>
             </LinearLayout>
 
         </FrameLayout>
