@@ -22,6 +22,7 @@ import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -51,9 +52,8 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
     private FrameLayout mapClinicInfoLayout;
     private FrameLayout mapClinicLayout;
     private boolean firstTime;
+    private boolean alreadyDraw;
 
-    private Tenant tenant;
-    private ListView listView;
     private JSONParser jsonParser;
     private JSONObject jsonObject;
     private String serverURL;
@@ -76,9 +76,19 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
         mapClinicName = (TextView) findViewById(R.id.map_clinicName);
         mapClinicInfoLayout = (FrameLayout) findViewById(R.id.map_data);
         mapClinicLayout = (FrameLayout) findViewById(R.id.map_layout);
+        serverURL = getResources().getString(R.string.server_url)+"tenant.php";
+
+        params = new ArrayList<NameValuePair>();
+
+        params.add(new BasicNameValuePair("lat", ""+latitude));
+        params.add(new BasicNameValuePair("long", ""+longitude));
+
+        new loadMapTenants().execute();
 
         try {
             // Loading map
+            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME, MIN_DISTANCE, this);
             initilizeMap();
 
         } catch (Exception e) {
@@ -101,6 +111,11 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
                         "Sorry! unable to create maps", Toast.LENGTH_SHORT)
                         .show();
             }else{
+
+//                drawMarker(new LatLng(3.160862, 101.726322), "Klinik Damai", 0);
+//                drawMarker(new LatLng(3.163090, 101.696796), "Klinik Raja", 1);
+//                drawMarker(new LatLng(3.143894, 101.697998), "Klinik Al-Qassam", 2);
+//                drawMultipleMarker();
 
                 googleMap.moveCamera( CameraUpdateFactory.newLatLngZoom(new LatLng(4.210484000000000000,101.975766000000020000) , 8) );
                 googleMap.setMyLocationEnabled(true);
@@ -127,16 +142,6 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
                     }
                 });
 
-                locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME, MIN_DISTANCE, this);
-
-                if(latitude > 0 && longitude > 0){
-                    params.add(new BasicNameValuePair("lat", ""+latitude));
-                    params.add(new BasicNameValuePair("long", ""+longitude));
-                    params.add(new BasicNameValuePair("no", "5"));
-
-                    new LoadAllTenant().execute();
-                }
 
             }
         }
@@ -155,6 +160,19 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 12);
         googleMap.animateCamera(cameraUpdate);
         locationManager.removeUpdates(this);
+
+        if(latitude > 0 && longitude > 0){
+            latitude = location.getLatitude();
+            longitude = location.getLongitude();
+        }else{
+            latitude = location.getLatitude();
+            longitude = location.getLongitude();
+
+            params.add(new BasicNameValuePair("lat", ""+latitude));
+            params.add(new BasicNameValuePair("long", ""+longitude));
+
+            new loadMapTenants().execute();
+        }
     }
 
     @Override
@@ -172,6 +190,18 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
 
     }
 
+    public void drawMultipleMarker(){
+
+        for(int i=0; i<tenantList.size(); i++){
+
+            double drawLat = Double.parseDouble(tenantList.get(i).get("latitude"));
+            double drawLong = Double.parseDouble(tenantList.get(i).get("longitude"));
+
+            drawMarker(new LatLng(drawLat, drawLong), tenantList.get(i).get("company_name"), i);
+        }
+
+    }
+
     private void drawMarker(LatLng point, String title, int index){
         // Creating an instance of MarkerOptions
         MarkerOptions markerOptions = new MarkerOptions();
@@ -179,13 +209,13 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
         // Setting latitude and longitude for the marker
         markerOptions.position(point);
         markerOptions.title(title);
-//        markerOptions.describeContents();
+        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_q));
 
         // Adding marker on the Google Map
         googleMap.addMarker(markerOptions).hideInfoWindow();
     }
 
-    class LoadAllTenant extends AsyncTask<String, String, String> {
+    class loadMapTenants extends AsyncTask<String, Integer, String> {
 
         public void onPreExecute(){
             // keluarkan loading bar & teks
@@ -193,6 +223,12 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
 //            pgLoadingTenant.setVisibility(View.VISIBLE);
 //            tvLoadingCpny.setVisibility(View.VISIBLE);
             super.onPreExecute();
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+
         }
 
         @Override
@@ -215,14 +251,11 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
 
                     jsonTenant = jsonTenants.getJSONObject(i);
 
-                    double jsonLatitude = Double.parseDouble(jsonTenant.getString("latitude"));
-                    double jsonLongitude = Double.parseDouble(jsonTenant.getString("longitude"));
-
                     tenantMap.put("tenant_id", jsonTenant.getString("tenant_id"));
                     tenantMap.put("company_name", jsonTenant.getString("company_name"));
+                    tenantMap.put("latitude", jsonTenant.getString("latitude"));
+                    tenantMap.put("longitude", jsonTenant.getString("longitude"));
                     tenantMap.put("jarak", jsonTenant.getString("jarak")+"km");
-
-                    drawMarker(new LatLng(jsonLatitude, jsonLongitude), "Klinik Damai", i);
 
                     tenantList.add(tenantMap);
 
@@ -258,8 +291,11 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
                 alert.show();
                 // kalau x de error
             }else{
-                // masukkan nilai list dlm listview xml
 
+                if(!alreadyDraw) {
+                    drawMultipleMarker();
+                    alreadyDraw = true;
+                }
             }
         }
     }
