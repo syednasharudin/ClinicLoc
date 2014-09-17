@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">ClinicLoc</string>
-    <string name="hello_world">Hello world!2</string>
+    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
 
 </resources>
