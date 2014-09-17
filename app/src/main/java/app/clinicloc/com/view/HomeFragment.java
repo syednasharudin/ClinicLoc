@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -107,7 +108,15 @@ public class HomeFragment extends Fragment implements LocationListener {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
 
-                        Log.w("Title:", ""+item.getTitle());
+                        double navLat = Double.parseDouble(tenantList.get(position).get("latitude"));
+                        double navLong = Double.parseDouble(tenantList.get(position).get("longitude"));
+
+                        Intent navigation = new Intent(Intent.ACTION_VIEW, Uri
+                                .parse("http://maps.google.com/maps?saddr="
+                                        + latitude + ","
+                                        + longitude + "&daddr="
+                                        + navLat + "," + navLong));
+                        startActivity(navigation);
                         return true;
                     }
                 });
@@ -203,6 +212,8 @@ public class HomeFragment extends Fragment implements LocationListener {
                     tenantMap.put("tenant_id", jsonTenant.getString("tenant_id"));
                     tenantMap.put("company_name", jsonTenant.getString("company_name"));
                     tenantMap.put("jarak", jsonTenant.getString("jarak")+"km");
+                    tenantMap.put("latitude", jsonTenant.getString("latitude"));
+                    tenantMap.put("longitude", jsonTenant.getString("longitude"));
 
                     tenantList.add(tenantMap);
 
