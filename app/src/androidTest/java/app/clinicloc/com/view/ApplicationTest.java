@@ -1,4 +1,4 @@
-package app.clinicloc.com.clinicloc;
+package app.clinicloc.com.view;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
