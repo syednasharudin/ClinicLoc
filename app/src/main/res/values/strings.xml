@@ -9,5 +9,6 @@
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="splashLogo">splashLogo</string>
     <string name="server_url">http://10.0.6.222:81/crontask/</string>
+    <string name="title_activity_maps">Map</string>
 
 </resources>

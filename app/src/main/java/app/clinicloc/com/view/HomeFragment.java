@@ -3,12 +3,14 @@ package app.clinicloc.com.view;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -37,7 +39,6 @@ public class HomeFragment extends Fragment {
 
     private Tenant tenant;
     private ListView listView;
-    private XMLParser xmlParser;
     private JSONParser jsonParser;
     private JSONObject jsonObject;
     private String serverURL;
@@ -50,6 +51,7 @@ public class HomeFragment extends Fragment {
     private HashMap<String, String> tenantMap;
     private ArrayList<HashMap<String, String>> tenantList;
     private ProgressBar pgLoadingTenant;
+    private Button btnOpenMap;
 
     public HomeFragment() {
     }
@@ -57,11 +59,21 @@ public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_home, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_home, container, false);
 
         listView = (ListView) rootView.findViewById(R.id.lvListOfTenant);
         pgLoadingTenant = (ProgressBar) rootView.findViewById(R.id.pgr_loading_bar);
+        btnOpenMap = (Button) rootView.findViewById(R.id.btn_open_map);
         serverURL = getResources().getString(R.string.server_url)+"clinicloc2.php";
+
+        btnOpenMap.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(rootView.getContext(), MapsActivity.class);
+                startActivity(intent);
+            }
+        });
 
         new LoadAllTenant().execute();
 
