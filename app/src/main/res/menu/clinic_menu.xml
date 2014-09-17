@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/item_more_info"
+        android:title="@string/cli_more_info" />
+    <item
+        android:id="@+id/item_navigate"
+        android:title="@string/cli_navigate" />
+    <item
+        android:id="@+id/item_rate"
+        android:title="@string/cli_rate" />
+</menu>
