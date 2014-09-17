@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">ClinicLoc</string>
-    <string name="hello_world">Hello world2!</string>
+    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_splash_screen">SplashScreen</string>
     <string name="dummy_button">Dummy Button</string>
