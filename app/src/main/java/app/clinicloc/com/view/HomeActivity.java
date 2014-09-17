@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,6 +26,13 @@ public class HomeActivity extends Activity {
         }
     }
 
+    @Override public void onCreateContextMenu(ContextMenu menu, View v,
+                                              ContextMenu.ContextMenuInfo menuInfo) {
+        // TODO Auto-generated method stub
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater m = getMenuInflater();
+        m.inflate(R.menu.clinic_menu, menu);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
