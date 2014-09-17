@@ -82,21 +82,10 @@ public class HomeFragment extends Fragment implements LocationListener {
 
         listView = (ListView) rootView.findViewById(R.id.lvListOfTenant);
         pgLoadingTenant = (ProgressBar) rootView.findViewById(R.id.pgr_loading_bar);
-        //btnOpenMap = (Button) rootView.findViewById(R.id.btn_open_map);
         serverURL = getResources().getString(R.string.server_url)+"tenant.php";
 
         params = new ArrayList<NameValuePair>();
 
-//        btnOpenMap.setOnClickListener(new View.OnClickListener() {
-//
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(rootView.getContext(), MapsActivity.class);
-//                startActivity(intent);
-//            }
-//        });
-
-//        registerForContextMenu(listView);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
