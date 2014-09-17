@@ -16,6 +16,7 @@ import android.widget.SimpleAdapter;
 
 import org.apache.http.NameValuePair;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -60,7 +61,7 @@ public class HomeFragment extends Fragment {
 
         listView = (ListView) rootView.findViewById(R.id.lvListOfTenant);
         pgLoadingTenant = (ProgressBar) rootView.findViewById(R.id.pgr_loading_bar);
-        serverURL = getResources().getString(R.string.server_url)+"tenant";
+        serverURL = getResources().getString(R.string.server_url)+"clinicloc2.php";
 
         new LoadAllTenant().execute();
 
@@ -87,33 +88,37 @@ public class HomeFragment extends Fragment {
         @Override
         protected String doInBackground(String... args) {
 
-            xmlParser = new XMLParser();
-            String xml = xmlParser.getXmlFromUrl("http://api.androidhive.info/pizza/?format=xml");
-            Document doc = xmlParser.getDomElement(xml); // getting DOM element
+            try {
 
-            NodeList nl = doc.getElementsByTagName("item");
-
-            if(nl.getLength() > 0) {
+                responseMessage = " ";
+                params = new ArrayList<NameValuePair>();
 
                 tenantList = new ArrayList<HashMap<String, String>>();
 
-                for (int i = 0; i < nl.getLength(); i++) {
-                    responseMessage = " ";
+                jsonParser = new JSONParser();
+                jsonObject = jsonParser.getJSONFromUrl(serverURL, params);
+
+                jsonTenants = jsonObject.getJSONArray("string");
+
+                for (int i = 0; i < jsonTenants.length(); i++) {
+
                     tenantMap = new HashMap<String, String>();
 
-                    Element e = (Element) nl.item(i);
-                    // adding each child node to HashMap key => value
-                    tenantMap.put("id", xmlParser.getValue(e, "id"));
-                    tenantMap.put("cost", xmlParser.getValue(e, "cost"));
-                    tenantMap.put("name", xmlParser.getValue(e, "name"));
+                    jsonTenant = jsonTenants.getJSONObject(i);
 
-                    Log.d("Data: ", tenantMap.get("name"));
-                    // adding HashList to ArrayList
+                    tenantMap.put("tenant_id", jsonTenant.getString("tenant_id"));
+                    tenantMap.put("name", jsonTenant.getString("name"));
+                    tenantMap.put("company_name", jsonTenant.getString("company_name"));
+
+
                     tenantList.add(tenantMap);
+
                 }
 
-            }else{
-                responseMessage = "No Data";
+            }catch (JSONException jse){
+                responseMessage = "Tidak dapat menghubungi pelayan.";
+            }catch (Exception e){
+                responseMessage = "Tidak dapat menghubungi pelayan.";
             }
 
             return null;
@@ -143,8 +148,8 @@ public class HomeFragment extends Fragment {
                 // masukkan nilai list dlm listview xml
                 adapter = new SimpleAdapter(
                         getActivity(), tenantList,
-                        R.layout.list_item_tenant, new String[] { "id",
-                        "name", "cost"},
+                        R.layout.list_item_tenant, new String[] { "tenant_id",
+                        "name", "company_name"},
                         new int[] { R.id.tv_tenant_id, R.id.tv_tenant_name, R.id.tv_company_name });
                 // updating listview
                 listView.setAdapter(adapter);

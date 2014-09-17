@@ -4,6 +4,6 @@
     <string name="app_name">ClinicLoc</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="server_url">http://10.0.5.55/h2careRestfulWebServiceLocals/webresources/</string>
+    <string name="server_url">http://10.0.6.222:81/crontask/</string>
 
 </resources>
