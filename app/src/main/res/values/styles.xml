@@ -21,6 +21,10 @@
         <item name="android:background">@android:drawable/bottom_bar</item>
     </style>
 
+    <style name="MapBottom">
+        <item name="android:background">#F2F2F2</item>
+    </style>
+
     <style name="ButtonBarButton" />
 
 </resources>
