@@ -222,7 +222,7 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
                     tenantMap.put("company_name", jsonTenant.getString("company_name"));
                     tenantMap.put("jarak", jsonTenant.getString("jarak")+"km");
 
-                    drawMarker(new LatLng(jsonLatitude, jsonLongitude), jsonTenant.getString("company_name"), i);
+                    drawMarker(new LatLng(jsonLatitude, jsonLongitude), "Klinik Damai", i);
 
                     tenantList.add(tenantMap);
 

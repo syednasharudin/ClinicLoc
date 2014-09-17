@@ -17,14 +17,17 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.SimpleAdapter;
+import android.widget.Toast;
 
 import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -43,7 +46,7 @@ import app.clinicloc.com.json.XMLParser;
 /**
  * Created by syednasharudin on 9/17/2014.
  */
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements LocationListener {
 
     private Tenant tenant;
     private ListView listView;
@@ -60,6 +63,13 @@ public class HomeFragment extends Fragment {
     private ArrayList<HashMap<String, String>> tenantList;
     private ProgressBar pgLoadingTenant;
     private Button btnOpenMap;
+    private View rootView;
+    private double latitude = 0;
+    private double longitude = 0;
+    private LocationManager locationManager;
+    private static final long MIN_TIME = 400;
+    private static final float MIN_DISTANCE = 1000;
+    private int listItemPosition = 0;
 
     public HomeFragment() {
     }
@@ -67,25 +77,90 @@ public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        final View rootView = inflater.inflate(R.layout.fragment_home, container, false);
+        rootView = inflater.inflate(R.layout.fragment_home, container, false);
 
         listView = (ListView) rootView.findViewById(R.id.lvListOfTenant);
         pgLoadingTenant = (ProgressBar) rootView.findViewById(R.id.pgr_loading_bar);
-        btnOpenMap = (Button) rootView.findViewById(R.id.btn_open_map);
-        serverURL = getResources().getString(R.string.server_url)+"clinicloc2.php";
+        //btnOpenMap = (Button) rootView.findViewById(R.id.btn_open_map);
+        serverURL = getResources().getString(R.string.server_url)+"tenant.php";
 
-        btnOpenMap.setOnClickListener(new View.OnClickListener() {
+        params = new ArrayList<NameValuePair>();
 
+//        btnOpenMap.setOnClickListener(new View.OnClickListener() {
+//
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(rootView.getContext(), MapsActivity.class);
+//                startActivity(intent);
+//            }
+//        });
+
+//        registerForContextMenu(listView);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(rootView.getContext(), MapsActivity.class);
-                startActivity(intent);
+            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+
+                listItemPosition = position;
+                PopupMenu popupMenu = new PopupMenu(getActivity(), view);
+                popupMenu.getMenuInflater().inflate(R.menu.clinic_menu, popupMenu.getMenu());
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+
+                        Log.w("Title:", ""+item.getTitle());
+                        return true;
+                    }
+                });
+                popupMenu.show();
             }
         });
 
-        new LoadAllTenant().execute();
+        locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME, MIN_DISTANCE, this);
+
+        if(latitude > 0 && longitude > 0){
+            params.add(new BasicNameValuePair("lat", ""+latitude));
+            params.add(new BasicNameValuePair("long", ""+longitude));
+            params.add(new BasicNameValuePair("no", "5"));
+
+            new LoadAllTenant().execute();
+        }
 
         return rootView;
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+
+        if(latitude > 0 && longitude > 0){
+            latitude = location.getLatitude();
+            longitude = location.getLongitude();
+        }else{
+            latitude = location.getLatitude();
+            longitude = location.getLongitude();
+
+            params.add(new BasicNameValuePair("lat", ""+latitude));
+            params.add(new BasicNameValuePair("long", ""+longitude));
+            params.add(new BasicNameValuePair("no", "5"));
+
+            new LoadAllTenant().execute();
+        }
+
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
     }
 
     // connect server
@@ -111,7 +186,6 @@ public class HomeFragment extends Fragment {
             try {
 
                 responseMessage = " ";
-                params = new ArrayList<NameValuePair>();
 
                 tenantList = new ArrayList<HashMap<String, String>>();
 
@@ -127,9 +201,8 @@ public class HomeFragment extends Fragment {
                     jsonTenant = jsonTenants.getJSONObject(i);
 
                     tenantMap.put("tenant_id", jsonTenant.getString("tenant_id"));
-                    tenantMap.put("name", jsonTenant.getString("name"));
                     tenantMap.put("company_name", jsonTenant.getString("company_name"));
-
+                    tenantMap.put("jarak", jsonTenant.getString("jarak")+"km");
 
                     tenantList.add(tenantMap);
 
@@ -169,10 +242,11 @@ public class HomeFragment extends Fragment {
                 adapter = new SimpleAdapter(
                         getActivity(), tenantList,
                         R.layout.list_item_tenant, new String[] { "tenant_id",
-                        "name", "company_name"},
+                        "company_name", "jarak"},
                         new int[] { R.id.tv_tenant_id, R.id.tv_tenant_name, R.id.tv_company_name });
                 // updating listview
                 listView.setAdapter(adapter);
+
             }
         }
     }
