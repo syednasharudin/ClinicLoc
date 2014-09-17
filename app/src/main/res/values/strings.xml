@@ -8,7 +8,6 @@
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="splashLogo">splashLogo</string>
-    <string name="server_url">http://10.0.5.55/h2careRestfulWebServiceLocals/webresources/</string>
     <string name="server_url">http://10.0.6.222:81/crontask/</string>
 
 </resources>
