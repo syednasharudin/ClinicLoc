@@ -3,5 +3,6 @@
     <color name="black_overlay">#66000000</color>
     <color name="fontColor_blue">#084B8A</color>
     <color name="fontColor_grey">#848484</color>
+    <color name="cl_bgColor_blue">#125fad</color>
 
 </resources>

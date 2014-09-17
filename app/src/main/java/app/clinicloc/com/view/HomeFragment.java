@@ -10,11 +10,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SimpleAdapter;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 import org.apache.http.NameValuePair;
 import org.json.JSONArray;
@@ -51,7 +54,8 @@ public class HomeFragment extends Fragment {
     private HashMap<String, String> tenantMap;
     private ArrayList<HashMap<String, String>> tenantList;
     private ProgressBar pgLoadingTenant;
-    private Button btnOpenMap;
+    //private Button btnOpenMap;
+    Spinner spinnerPanelFilter;
 
     public HomeFragment() {
     }
@@ -63,17 +67,48 @@ public class HomeFragment extends Fragment {
 
         listView = (ListView) rootView.findViewById(R.id.lvListOfTenant);
         pgLoadingTenant = (ProgressBar) rootView.findViewById(R.id.pgr_loading_bar);
-        btnOpenMap = (Button) rootView.findViewById(R.id.btn_open_map);
+        //btnOpenMap = (Button) rootView.findViewById(R.id.btn_open_map);
         serverURL = getResources().getString(R.string.server_url)+"clinicloc2.php";
-
-        btnOpenMap.setOnClickListener(new View.OnClickListener() {
+        spinnerPanelFilter = (Spinner) rootView.findViewById(R.id.spinnerPanel);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item) {
 
             @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(rootView.getContext(), MapsActivity.class);
-                startActivity(intent);
+            public View getView(int position, View convertView, ViewGroup parent) {
+
+                View v = super.getView(position, convertView, parent);
+                if (position == getCount()) {
+                    ((TextView)v.findViewById(android.R.id.text1)).setText("");
+                    ((TextView)v.findViewById(android.R.id.text1)).setHint(getItem(getCount())); //"Hint to be displayed"
+                }
+
+                return v;
             }
-        });
+
+            @Override
+            public int getCount() {
+                return super.getCount()-1; // you dont display last item. It is used as hint.
+            }
+
+        };
+
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        adapter.add("Red Alert");
+        adapter.add("Green Alert");
+        adapter.add("Yellow Alert");
+        adapter.add("Hint to be displayed");
+
+        spinnerPanelFilter.setSelection(adapter.getCount()); //display hint
+        spinnerPanelFilter.setAdapter(adapter);
+        //spinnerPanelFilter.setOnItemSelectedListener(this);
+
+//        btnOpenMap.setOnClickListener(new View.OnClickListener() {
+//
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(rootView.getContext(), MapsActivity.class);
+//                startActivity(intent);
+//            }
+//        });
 
         new LoadAllTenant().execute();
 
