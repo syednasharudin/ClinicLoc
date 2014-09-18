@@ -255,7 +255,7 @@ public class HomeFragment extends Fragment implements LocationListener {
 
                     jsonTenant = jsonTenants.getJSONObject(i);
 
-                    tenantMap.put("tenant_id", jsonTenant.getString("tenant_id"));
+                    //tenantMap.put("tenant_id", jsonTenant.getString("tenant_id"));
                     tenantMap.put("company_name", jsonTenant.getString("company_name"));
                     tenantMap.put("jarak", jsonTenant.getString("city")+", "+jsonTenant.getString("jarak")+"km");
                     tenantMap.put("latitude", jsonTenant.getString("latitude"));
