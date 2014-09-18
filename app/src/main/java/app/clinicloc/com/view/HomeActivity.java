@@ -12,12 +12,21 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.parse.Parse;
+import com.parse.PushService;
+
 
 public class HomeActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Parse.initialize(this, "pDMeXLDMynoSTTOFK1KV1A9vrc5VxtNjLFCucb7w", "wGnfiwN5vQMGrSyVkbkTs055WU3QdMZJBEg9b72z");
+        PushService.setDefaultPushCallback(this, HomeActivity.class);
+        PushService.subscribe(this, "myque", HomeActivity.class);
+        PushService.setDefaultPushCallback(this, HomeActivity.class);
+
         setContentView(R.layout.activity_home);
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()

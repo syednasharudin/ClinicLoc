@@ -97,7 +97,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/tv_count_patient"
+                        android:id="@+id/map_count_patient"
                         android:layout_alignLeft="@+id/imageWaitingBox"
                         android:layout_alignTop="@+id/imageWaitingBox"
                         android:layout_alignRight="@+id/imageWaitingBox"

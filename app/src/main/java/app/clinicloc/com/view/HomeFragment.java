@@ -151,10 +151,11 @@ public class HomeFragment extends Fragment implements LocationListener {
                     params.add(new BasicNameValuePair("panelname", panelValue));
                 }else{
                     serverURL = getResources().getString(R.string.server_url) + "tenant.php";
-                    params.add(new BasicNameValuePair("lat", ""+latitude));
-                    params.add(new BasicNameValuePair("long", ""+longitude));
+
                 }
 
+                params.add(new BasicNameValuePair("lat", ""+latitude));
+                params.add(new BasicNameValuePair("long", ""+longitude));
                 params.add(new BasicNameValuePair("no", "5"));
 
                 new LoadAllTenant().execute();
