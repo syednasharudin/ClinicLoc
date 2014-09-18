@@ -54,7 +54,8 @@
                 android:paddingBottom="10.0sp"
                 android:id="@+id/lvListOfTenant"
                 android:divider="@android:color/transparent"
-                android:dividerHeight="10.0sp" />
+                android:dividerHeight="10.0sp"
+                android:listSelector="@drawable/list_selector"/>
 
         </LinearLayout>
     </LinearLayout>
