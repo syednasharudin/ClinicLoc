@@ -14,7 +14,7 @@
     <string name="queueCount">QUEUE #</string>
 
     <!-- Context Menu Data -->
-    <string name="cli_more_info">More Info</string>
+    <string name="cli_more_info">Add to Queue</string>
     <string name="cli_navigate">Navigate</string>
     <string name="cli_rate">Rate Clinic</string>
     <string name="cli_call">Call</string>

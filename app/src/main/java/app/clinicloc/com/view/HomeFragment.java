@@ -120,6 +120,10 @@ public class HomeFragment extends Fragment implements LocationListener {
                             startActivity(intent);
 
                         }
+
+                        if(item.getItemId() == R.id.item_more_info){
+                            new AddToQueue().execute();
+                        }
                         return true;
                     }
                 });
@@ -277,14 +281,14 @@ public class HomeFragment extends Fragment implements LocationListener {
         }
 
         // lepas proses selesai
-        public void onPostExecute(String args){
+        public void onPostExecute(String args) {
 
             // hide kan blik loading bar ngn teks
             pgLoadingTenant.setVisibility(View.GONE);
 //            tvLoadingCpny.setVisibility(View.GONE);
 
             // cek jika tiada nilai atau error, keluar alert dan kembali ke activity sblumnye
-            if(responseMessage.trim().length() > 0) {
+            if (responseMessage.trim().length() > 0) {
                 AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
                 alert.setMessage(responseMessage);
                 alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -296,18 +300,58 @@ public class HomeFragment extends Fragment implements LocationListener {
                 });
                 alert.show();
                 // kalau x de error
-            }else{
+            } else {
                 // masukkan nilai list dlm listview xml
                 adapter = new SimpleAdapter(
                         getActivity(), tenantList,
-                        R.layout.list_item_tenant, new String[] { "company_name",
+                        R.layout.list_item_tenant, new String[]{"company_name",
                         "jarak", "no_tel", "total"},
-                        new int[] { R.id.tv_tenant_id, R.id.tv_tenant_name, R.id.tv_company_name, R.id.tv_count_patient });
+                        new int[]{R.id.tv_tenant_id, R.id.tv_tenant_name, R.id.tv_company_name, R.id.tv_count_patient});
                 // updating listview
                 listView.setAdapter(adapter);
 
             }
         }
     }
+
+
+        // connect server
+        class AddToQueue extends AsyncTask<String, Integer, String> {
+
+            public void onPreExecute(){
+                // keluarkan loading bar & teks
+
+                super.onPreExecute();
+            }
+
+            @Override
+            protected void onProgressUpdate(Integer... values) {
+                super.onProgressUpdate(values);
+
+            }
+
+            @Override
+            protected String doInBackground(String... args) {
+
+                try {
+
+                    responseMessage = " ";
+
+                    jsonParser = new JSONParser();
+                    jsonObject = jsonParser.getJSONFromUrl(getResources().getString(R.string.server_url)+"add_to_queue.php", params);
+
+                }catch (Exception e){
+                    //e.printStackTrace();
+                    responseMessage = "Could not fetch data from server.";
+                }
+
+                return null;
+            }
+
+            // lepas proses selesai
+            public void onPostExecute(String args){
+
+            }
+        }
 
 }

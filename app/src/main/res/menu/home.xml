@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".HomeActivity" >
     <item android:id="@+id/action_map"
-        android:icon="@drawable/maps_icon"
+        android:icon="@drawable/ic_action_map"
         android:title="@string/openMap"
         android:showAsAction="ifRoom" />
 </menu>

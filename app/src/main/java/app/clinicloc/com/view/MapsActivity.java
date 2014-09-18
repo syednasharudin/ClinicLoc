@@ -219,7 +219,7 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
         // Setting latitude and longitude for the marker
         markerOptions.position(point);
         markerOptions.title(""+index);
-        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_q));
+        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.cl_logo_official));
 
         // Adding marker on the Google Map
         googleMap.addMarker(markerOptions).hideInfoWindow();
