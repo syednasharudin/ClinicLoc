@@ -10,6 +10,7 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ListAdapter;
@@ -49,6 +50,9 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
     private static final long MIN_TIME = 400;
     private static final float MIN_DISTANCE = 1000;
     private TextView mapClinicName;
+    private TextView mapClinicAddress;
+    private TextView mapClinicContacNo;
+    private TextView mapCountPatient;
     private FrameLayout mapClinicInfoLayout;
     private FrameLayout mapClinicLayout;
     private boolean firstTime;
@@ -59,8 +63,6 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
     private String serverURL;
     private List<NameValuePair> params;
     private String responseMessage;
-    private ListAdapter adapter;
-    private List<Tenant> tenants;
     private JSONArray jsonTenants;
     private JSONObject jsonTenant;
     private HashMap<String, String> tenantMap;
@@ -74,16 +76,20 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
         setContentView(R.layout.activity_maps);
 
         mapClinicName = (TextView) findViewById(R.id.map_clinicName);
+        mapClinicAddress = (TextView) findViewById(R.id.map_clinicAddress);
+        mapClinicContacNo = (TextView) findViewById(R.id.map_clinicContactNo);
+        mapCountPatient  = (TextView) findViewById(R.id.map_count_patient);
         mapClinicInfoLayout = (FrameLayout) findViewById(R.id.map_data);
         mapClinicLayout = (FrameLayout) findViewById(R.id.map_layout);
         serverURL = getResources().getString(R.string.server_url)+"tenant.php";
-
+        tenantList = new ArrayList<HashMap<String, String>>();
         params = new ArrayList<NameValuePair>();
 
         params.add(new BasicNameValuePair("lat", ""+latitude));
         params.add(new BasicNameValuePair("long", ""+longitude));
 
-        new loadMapTenants().execute();
+        if(!alreadyDraw)
+            new loadMapTenants().execute();
 
         try {
             // Loading map
@@ -112,36 +118,8 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
                         .show();
             }else{
 
-//                drawMarker(new LatLng(3.160862, 101.726322), "Klinik Damai", 0);
-//                drawMarker(new LatLng(3.163090, 101.696796), "Klinik Raja", 1);
-//                drawMarker(new LatLng(3.143894, 101.697998), "Klinik Al-Qassam", 2);
-//                drawMultipleMarker();
-
                 googleMap.moveCamera( CameraUpdateFactory.newLatLngZoom(new LatLng(4.210484000000000000,101.975766000000020000) , 8) );
                 googleMap.setMyLocationEnabled(true);
-                googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                    @Override
-                    public boolean onMarkerClick(Marker marker) {
-//                        Toast.makeText(getApplicationContext(), "Index: "+marker.getTitle(), Toast.LENGTH_LONG);
-
-
-                        if(!firstTime) {
-                            firstTime = true;
-                            WeightAnimation weightAnimation = new WeightAnimation(mapClinicInfoLayout, 2);
-                            weightAnimation.setDuration(1000);
-                            WeightAnimation weightAnimation2 = new WeightAnimation(mapClinicLayout, 7);
-                            weightAnimation2.setDuration(1000);
-                            mapClinicInfoLayout.startAnimation(weightAnimation);
-                            mapClinicLayout.startAnimation(weightAnimation2);
-                        }
-
-                        mapClinicName.setText(marker.getTitle());
-                        googleMap.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
-                        marker.hideInfoWindow();
-                        return true;
-                    }
-                });
-
 
             }
         }
@@ -171,7 +149,8 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
             params.add(new BasicNameValuePair("lat", ""+latitude));
             params.add(new BasicNameValuePair("long", ""+longitude));
 
-            new loadMapTenants().execute();
+            if(!alreadyDraw)
+                new loadMapTenants().execute();
         }
     }
 
@@ -192,13 +171,44 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
 
     public void drawMultipleMarker(){
 
+        googleMap.clear();
+
         for(int i=0; i<tenantList.size(); i++){
 
             double drawLat = Double.parseDouble(tenantList.get(i).get("latitude"));
             double drawLong = Double.parseDouble(tenantList.get(i).get("longitude"));
 
+//            Log.w("Index2: "+i, tenantList.get(i).get("company_name"));
+
             drawMarker(new LatLng(drawLat, drawLong), tenantList.get(i).get("company_name"), i);
         }
+
+        googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+//                        Toast.makeText(getApplicationContext(), "Index: "+marker.getTitle(), Toast.LENGTH_LONG);
+                if(!firstTime) {
+                    firstTime = true;
+                    WeightAnimation weightAnimation = new WeightAnimation(mapClinicInfoLayout, 2);
+                    weightAnimation.setDuration(1000);
+                    WeightAnimation weightAnimation2 = new WeightAnimation(mapClinicLayout, 7);
+                    weightAnimation2.setDuration(1000);
+                    mapClinicInfoLayout.startAnimation(weightAnimation);
+                    mapClinicLayout.startAnimation(weightAnimation2);
+                }
+
+                int index = Integer.parseInt(marker.getTitle());
+
+                mapClinicName.setText(tenantList.get(index).get("company_name"));
+                //
+                mapClinicAddress.setText(tenantList.get(index).get("address"));
+                mapClinicContacNo.setText(tenantList.get(index).get("no_tel"));
+                mapCountPatient.setText(tenantList.get(index).get("total"));
+                googleMap.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
+                marker.hideInfoWindow();
+                return true;
+            }
+        });
 
     }
 
@@ -208,7 +218,7 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
 
         // Setting latitude and longitude for the marker
         markerOptions.position(point);
-        markerOptions.title(title);
+        markerOptions.title(""+index);
         markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_q));
 
         // Adding marker on the Google Map
@@ -238,33 +248,39 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
 
                 responseMessage = " ";
 
-                tenantList = new ArrayList<HashMap<String, String>>();
-
                 jsonParser = new JSONParser();
                 jsonObject = jsonParser.getJSONFromUrl(serverURL, params);
 
                 jsonTenants = jsonObject.getJSONArray("string");
 
-                for (int i = 0; i < jsonTenants.length(); i++) {
+                for (int j = 0; j < jsonTenants.length(); j++) {
 
                     tenantMap = new HashMap<String, String>();
 
-                    jsonTenant = jsonTenants.getJSONObject(i);
+                    jsonTenant = jsonTenants.getJSONObject(j);
 
                     tenantMap.put("tenant_id", jsonTenant.getString("tenant_id"));
                     tenantMap.put("company_name", jsonTenant.getString("company_name"));
                     tenantMap.put("latitude", jsonTenant.getString("latitude"));
                     tenantMap.put("longitude", jsonTenant.getString("longitude"));
                     tenantMap.put("jarak", jsonTenant.getString("jarak")+"km");
+                    tenantMap.put("address", jsonTenant.getString("address")+", "
+                            +jsonTenant.getString("postcode")+", "+jsonTenant.getString("city")+
+                            ", "+jsonTenant.getString("state"));
+                    tenantMap.put("total", jsonTenant.getString("total"));
+                    tenantMap.put("no_tel", jsonTenant.getString("no_tel"));
 
-                    tenantList.add(tenantMap);
+                    tenantList.add(j, tenantMap);
+
+//                    Log.w("Index: "+j, tenantList.get(j).get("company_name"));
+//                    tenantList.add(tenantMap);
 
                 }
 
             }catch (JSONException jse){
-                responseMessage = "Tidak dapat menghubungi pelayan.";
+                responseMessage = "Could not fetch data from server.";
             }catch (Exception e){
-                responseMessage = "Tidak dapat menghubungi pelayan.";
+                responseMessage = "Could not fetch data from server.";
             }
 
             return null;

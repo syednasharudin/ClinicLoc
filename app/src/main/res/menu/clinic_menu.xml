@@ -10,4 +10,8 @@
     <item
         android:id="@+id/item_rate"
         android:title="@string/cli_rate" />
+
+    <item
+        android:id="@+id/item_call"
+        android:title="@string/cli_call" />
 </menu>

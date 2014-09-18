@@ -17,6 +17,7 @@
     <string name="cli_more_info">More Info</string>
     <string name="cli_navigate">Navigate</string>
     <string name="cli_rate">Rate Clinic</string>
+    <string name="cli_call">Call</string>
     <string name="openMap">Show Maps</string>
     <string name="contactIcon">contact_icon</string>
 
