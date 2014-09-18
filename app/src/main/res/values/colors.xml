@@ -4,5 +4,6 @@
     <color name="fontColor_blue">#084B8A</color>
     <color name="fontColor_grey">#848484</color>
     <color name="cl_bgColor_blue">#125fad</color>
+    <color name="cl_card_hover_blue">#84d8ff</color>
 
 </resources>
