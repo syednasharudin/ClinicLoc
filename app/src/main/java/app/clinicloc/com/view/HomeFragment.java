@@ -19,12 +19,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.SimpleAdapter;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import org.apache.http.NameValuePair;
@@ -71,6 +73,7 @@ public class HomeFragment extends Fragment implements LocationListener {
     private static final long MIN_TIME = 400;
     private static final float MIN_DISTANCE = 1000;
     private int listItemPosition = 0;
+    private Spinner spinnerPanel;
 
     public HomeFragment() {
     }
@@ -82,6 +85,7 @@ public class HomeFragment extends Fragment implements LocationListener {
 
         listView = (ListView) rootView.findViewById(R.id.lvListOfTenant);
         pgLoadingTenant = (ProgressBar) rootView.findViewById(R.id.pgr_loading_bar);
+        spinnerPanel = (Spinner) rootView.findViewById(R.id.spinnerPanel);
         serverURL = getResources().getString(R.string.server_url)+"tenant.php";
 
         params = new ArrayList<NameValuePair>();
@@ -97,15 +101,25 @@ public class HomeFragment extends Fragment implements LocationListener {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
 
-                        double navLat = Double.parseDouble(tenantList.get(position).get("latitude"));
-                        double navLong = Double.parseDouble(tenantList.get(position).get("longitude"));
+                        if(item.getItemId() == R.id.item_navigate) {
 
-                        Intent navigation = new Intent(Intent.ACTION_VIEW, Uri
-                                .parse("http://maps.google.com/maps?saddr="
-                                        + latitude + ","
-                                        + longitude + "&daddr="
-                                        + navLat + "," + navLong));
-                        startActivity(navigation);
+                            double navLat = Double.parseDouble(tenantList.get(position).get("latitude"));
+                            double navLong = Double.parseDouble(tenantList.get(position).get("longitude"));
+
+                            Intent navigation = new Intent(Intent.ACTION_VIEW, Uri
+                                    .parse("http://maps.google.com/maps?saddr="
+                                            + latitude + ","
+                                            + longitude + "&daddr="
+                                            + navLat + "," + navLong));
+                            startActivity(navigation);
+                        }
+
+                        if(item.getItemId() == R.id.item_call){
+                            Intent intent = new Intent(Intent.ACTION_DIAL);
+                            intent.setData(Uri.parse("tel:"+tenantList.get(position).get("no_tel")));
+                            startActivity(intent);
+
+                        }
                         return true;
                     }
                 });
@@ -124,7 +138,49 @@ public class HomeFragment extends Fragment implements LocationListener {
             new LoadAllTenant().execute();
         }
 
+        loadSpinnerData(rootView);
+
+        spinnerPanel.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+
+                String panelValue = spinnerPanel.getSelectedItem().toString();
+
+                if(panelValue.equals("All Panel") == false) {
+                    serverURL = getResources().getString(R.string.server_url) + "panel.php";
+                    params.add(new BasicNameValuePair("panelname", panelValue));
+                }else{
+                    serverURL = getResources().getString(R.string.server_url) + "tenant.php";
+                    params.add(new BasicNameValuePair("lat", ""+latitude));
+                    params.add(new BasicNameValuePair("long", ""+longitude));
+                }
+
+                params.add(new BasicNameValuePair("no", "5"));
+
+                new LoadAllTenant().execute();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
         return rootView;
+    }
+
+    public void loadSpinnerData(View view){
+        final List<String> genderList = new ArrayList<String>();
+        genderList.add("All Panel");
+        genderList.add("Red Alert");
+        genderList.add("AIA");
+        genderList.add("ING");
+
+        ArrayAdapter<String> adp= new ArrayAdapter<String>(view.getContext(),
+                R.layout.spinner_item,genderList);
+        adp.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerPanel.setAdapter(adp);
+
     }
 
     @Override
@@ -200,18 +256,20 @@ public class HomeFragment extends Fragment implements LocationListener {
 
                     tenantMap.put("tenant_id", jsonTenant.getString("tenant_id"));
                     tenantMap.put("company_name", jsonTenant.getString("company_name"));
-                    tenantMap.put("jarak", jsonTenant.getString("jarak")+"km");
+                    tenantMap.put("jarak", jsonTenant.getString("city")+", "+jsonTenant.getString("jarak")+"km");
                     tenantMap.put("latitude", jsonTenant.getString("latitude"));
                     tenantMap.put("longitude", jsonTenant.getString("longitude"));
+                    tenantMap.put("total", jsonTenant.getString("total"));
+                    tenantMap.put("no_tel", jsonTenant.getString("no_tel"));
 
                     tenantList.add(tenantMap);
 
                 }
 
             }catch (JSONException jse){
-                responseMessage = "Tidak dapat menghubungi pelayan.";
+                responseMessage = "Could not fetch data from server.";
             }catch (Exception e){
-                responseMessage = "Tidak dapat menghubungi pelayan.";
+                responseMessage = "Could not fetch data from server.";
             }
 
             return null;
@@ -241,9 +299,9 @@ public class HomeFragment extends Fragment implements LocationListener {
                 // masukkan nilai list dlm listview xml
                 adapter = new SimpleAdapter(
                         getActivity(), tenantList,
-                        R.layout.list_item_tenant, new String[] { "tenant_id",
-                        "company_name", "jarak"},
-                        new int[] { R.id.tv_tenant_id, R.id.tv_tenant_name, R.id.tv_company_name });
+                        R.layout.list_item_tenant, new String[] { "company_name",
+                        "jarak", "no_tel", "total"},
+                        new int[] { R.id.tv_tenant_id, R.id.tv_tenant_name, R.id.tv_company_name, R.id.tv_count_patient });
                 // updating listview
                 listView.setAdapter(adapter);
 
